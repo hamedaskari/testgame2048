@@ -204,18 +204,7 @@ GameManager.prototype.addRandomTile = function () {
     this.grid.insertTile(tile);
   }
 };
-
-// function signData(data) {
-//   const _p85wq6 = "Gx#8dLpM$eJ4BnVcRtY7uI9oP0aSdFgHjKlZx!@#$%^&*()_+-={}:<>?,.";
-//   return CryptoJS.SHA256(_p85wq6 + data).toString(CryptoJS.enc.Hex);
-// }
-
-// GameManager.prototype.generateToken = function (data) {
-//   const timestamp = new Date().toISOString();
-//   const signature = signData(data + timestamp);
-//   return `${timestamp}:${signature}`;
-// };
-
+//send score to data base
 GameManager.prototype.sendToLeaderboard = function () {
   const data = {
     username: this.userData?.name || "ناشناس",
@@ -223,13 +212,10 @@ GameManager.prototype.sendToLeaderboard = function () {
     userId: this.userData?.userId,
   };
 
-  // const token = this.generateToken(JSON.stringify(data));
-
   fetch("https://game2048.liara.run/submit-score", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      // Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   })
@@ -242,8 +228,12 @@ GameManager.prototype.sendToLeaderboard = function () {
       console.error("خطا در ارسال اطلاعات:", error);
     });
 };
-
+// Sends the updated grid to the actuator
 GameManager.prototype.actuate = function () {
+  if (this.over && this.score > this.storageManager.getBestScore()) {
+    this.storageManager.setBestScore(this.score);
+  }
+
   if (this.over && !this.scoreSent) {
     this.sendToLeaderboard();
     this.storageManager.clearGameState();
@@ -254,7 +244,7 @@ GameManager.prototype.actuate = function () {
     score: this.score,
     over: this.over,
     won: this.won,
-    bestScore: bestScoreCurrentUser,
+    bestScore: this.storageManager.getBestScore(),
     terminated: this.isGameTerminated(),
   });
 };
