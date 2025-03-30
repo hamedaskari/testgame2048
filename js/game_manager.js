@@ -244,6 +244,10 @@ GameManager.prototype.sendToLeaderboard = function () {
 };
 
 GameManager.prototype.actuate = function () {
+  if (this.over && this.score > this.storageManager.getBestScore()) {
+    this.storageManager.setBestScore(this.score);
+  }
+
   if (this.over && !this.scoreSent) {
     this.sendToLeaderboard();
     this.storageManager.clearGameState();
@@ -254,7 +258,7 @@ GameManager.prototype.actuate = function () {
     score: this.score,
     over: this.over,
     won: this.won,
-    bestScore: bestScoreCurrentUser,
+    bestScore: this.storageManager.getBestScore(),
     terminated: this.isGameTerminated(),
   });
 };

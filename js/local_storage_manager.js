@@ -42,6 +42,7 @@ window.fakeStorage = {
 };
 
 function LocalStorageManager() {
+  this._bestScoreKey = "bestScore";
   this._gameStateKey = "gameState";
   this.storage = this._initStorage();
 }
@@ -54,6 +55,16 @@ LocalStorageManager.prototype._initStorage = function () {
   } catch (e) {
     return window.fakeStorage;
   }
+};
+
+// Best score handlers
+LocalStorageManager.prototype.getBestScore = function () {
+  const encrypted = this.storage.getItem(this._bestScoreKey);
+  return encrypted ? parseInt(_decryptData(encrypted)) : 0;
+};
+
+LocalStorageManager.prototype.setBestScore = function (score) {
+  this.storage.setItem(this._bestScoreKey, _encryptData(score.toString()));
 };
 
 // Game state handlers
