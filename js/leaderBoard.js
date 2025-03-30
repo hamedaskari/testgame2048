@@ -1,7 +1,7 @@
 // Function to get rank icon
 let allPlayersData = [];
 let userId = null;
-
+let bestScoreCurrentUser = 0;
 function getRankIcon(rankNumber) {
   const player = allPlayersData[rankNumber];
   if (player?.userId === userId && player.rank) {
@@ -105,16 +105,15 @@ function renderLeaderboard(playersData) {
     emptyRow.appendChild(emptyCell);
     leaderboardBody.appendChild(emptyRow);
   } else {
-    const scoreFromLocalStorage = localStorage.getItem("score");
-
     playersToDisplay.forEach((player, index) => {
       const row = document.createElement("tr");
       row.className = `player-row ${currentRank <= 3 ? "top-player" : ""}`;
 
       // استایل‌دهی کاربر فعلی
       if (player?.userId === userId) {
+        bestScoreCurrentUser = player?.score;
         document.querySelector(".best-container").textContent =
-          player?.score || scoreFromLocalStorage || 0;
+          player?.score || 0;
         row.style.backgroundColor = "rgb(231 231 231 / 39%)";
         row.style.borderBottom = "2px solid rgb(47 176 0)";
       }
