@@ -120,7 +120,9 @@ GameManager.prototype.getUserInfo = function () {
     const initData = Bale.WebApp.initDataUnsafe;
     this.showLoading();
 
-    fetch(`https://game2048.liara.run/check-user-status?userId=${422975454}`)
+    fetch(
+      `https://game2048.liara.run/check-user-status?userId=${initData.user?.id}`
+    )
       .then((response) => {
         if (!response.ok) {
           Bale.WebApp.close();
@@ -139,7 +141,7 @@ GameManager.prototype.getUserInfo = function () {
         this.userData = {
           name: initData.user?.first_name || "ناشناس",
           username: initData.user?.username || initData.user?.first_name,
-          userId: 422975454 || initData.user?.id,
+          userId: initData.user?.id,
         };
 
         this.hideLoading();
