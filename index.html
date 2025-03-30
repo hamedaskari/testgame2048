@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="fa">
+  <head>
+    <meta charset="utf-8" />
+    <title>بازی 2048</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Roboto:ital,wght@0,100..900;1,100..900&family=Vazirmatn:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link href="style/main.css" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="apple-touch-icon" href="meta/apple-touch-icon.png" />
+    <link
+      rel="apple-touch-startup-image"
+      href="meta/apple-touch-startup-image-640x1096.png"
+      media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)"
+    />
+    <!-- iPhone 5+ -->
+    <link
+      rel="apple-touch-startup-image"
+      href="meta/apple-touch-startup-image-640x920.png"
+      media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2)"
+    />
+    <!-- iPhone, retina -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta
+      name="viewport"
+      content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1, user-scalable=no, minimal-ui"
+    />
+    <style>
+      /* استایل‌های اولیه برای مخفی کردن لیدربرد */
+      #leaderboard-container {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" id="game-container">
+      <div class="heading">
+        <h1 class="title">2048</h1>
+        <div class="scores-container">
+          <div class="score-container">0</div>
+          <div class="best-container">0</div>
+        </div>
+      </div>
+
+      <div class="above-game">
+        <p class="game-intro">
+          شروع کنید و به <strong>2048</strong> امتیاز برسید
+        </p>
+        <div class="btn-container">
+          <a class="restart-button">بازی جدید</a>
+          <a id="leaderBoardButton" class="leaderBoard-button"> 🥇 رتبه بندی</a>
+        </div>
+      </div>
+
+      <div class="box-game">
+        <div class="game-container">
+          <div class="game-message">
+            <p></p>
+            <div class="lower">
+              <a class="keep-playing-button">ادامه دادن</a>
+              <a class="retry-button">بازی دوباره</a>
+            </div>
+          </div>
+
+          <div class="grid-container">
+            <div class="grid-row">
+              <div class="grid-cell"></div>
+              <div class="grid-cell"></div>
+              <div class="grid-cell"></div>
+              <div class="grid-cell"></div>
+            </div>
+            <div class="grid-row">
+              <div class="grid-cell"></div>
+              <div class="grid-cell"></div>
+              <div class="grid-cell"></div>
+              <div class="grid-cell"></div>
+            </div>
+            <div class="grid-row">
+              <div class="grid-cell"></div>
+              <div class="grid-cell"></div>
+              <div class="grid-cell"></div>
+              <div class="grid-cell"></div>
+            </div>
+            <div class="grid-row">
+              <div class="grid-cell"></div>
+              <div class="grid-cell"></div>
+              <div class="grid-cell"></div>
+              <div class="grid-cell"></div>
+            </div>
+          </div>
+
+          <div class="tile-container"></div>
+        </div>
+      </div>
+
+      <p class="game-explanation">
+        <strong class="important">نحوه بازی:</strong> اگر از موبایل استفاده
+        می‌کنید، با لمس و کشیدن صفحه، کاشی‌ها را حرکت دهید. اگر از کامپیوتر
+        استفاده می‌کنید، با <strong>کلیدهای جهت‌دار</strong> کاشی‌ها را جابه‌جا
+        کنید. وقتی دو کاشی با عدد یکسان به هم برخورد کنند،
+        <strong>ادغام می‌شوند</strong>
+      </p>
+    </div>
+
+    <!-- کدهای لیدربرد -->
+    <div class="container" id="leaderboard-container">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">جدول امتیازات</h2>
+        </div>
+        <div class="card-content">
+          <div
+            style="
+              display: flex;
+              width: 8rem;
+              justify-content: center;
+              border-radius: 10px;
+              text-align: center;
+              margin-bottom: 1rem;
+              background-color: rgb(0, 155, 13);
+            "
+          >
+            <a class="returnToGame-button" href="#">ادامه بازی</a>
+          </div>
+          <div id="error-message" class="error-message"></div>
+          <div id="table-container" class="table-container">
+            <table id="leaderboard-table" class="leaderboard-table">
+              <thead>
+                <tr>
+                  <th class="score-column">
+                    <div class="score-header">
+                      امتیاز
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M8 1l-4 4h8l-4 4"
+                          stroke="#4b5563"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  </th>
+                  <th class="player-column">بازیکن</th>
+                  <th class="rank-column">رتبه</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-body"></tbody>
+            </table>
+            <div id="skeleton-container" class="skeleton-container"></div>
+          </div>
+          <div id="pagination-container" class="pagination-container"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://tapi.bale.ai/miniapp.js?1"></script>
+    <script src="js/bind_polyfill.js"></script>
+    <script src="js/classlist_polyfill.js"></script>
+    <script src="js/animframe_polyfill.js"></script>
+    <script src="js/keyboard_input_manager.js"></script>
+    <script src="js/html_actuator.js"></script>
+    <script src="js/grid.js"></script>
+    <script src="js/tile.js"></script>
+    <script src="js/local_storage_manager.js"></script>
+    <script src="js/game_manager.js"></script>
+    <script src="js/application.js"></script>
+    <script src="./js/leaderBoard.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const gameContainer = document.getElementById("game-container");
+        const leaderboardContainer = document.getElementById(
+          "leaderboard-container"
+        );
+        const leaderBoardButton = document.getElementById("leaderBoardButton");
+        const returnToGameButton = document.querySelector(
+          ".returnToGame-button"
+        );
+
+        // تابع نمایش لیدربرد و مخفی کردن بازی
+        function showLeaderboard() {
+          gameContainer.style.display = "none";
+          leaderboardContainer.style.display = "block";
+        }
+
+        // تابع نمایش بازی و مخفی کردن لیدربرد
+        function showGame() {
+          gameContainer.style.display = "block";
+          leaderboardContainer.style.display = "none";
+        }
+
+        // رویداد کلیک روی دکمه "رتبه بندی"
+        leaderBoardButton.addEventListener("click", function (event) {
+          event.preventDefault(); // جلوگیری از رفتن به صفحه دیگر
+          showLeaderboard();
+        });
+
+        // رویداد کلیک روی دکمه "ادامه بازی" در صفحه لیدربرد
+        returnToGameButton.addEventListener("click", function (event) {
+          event.preventDefault(); // جلوگیری از رفتن به صفحه دیگر
+          showGame();
+        });
+
+        // نمایش اولیه: نمایش بازی، مخفی کردن لیدربرد
+        showGame();
+      });
+    </script>
+  </body>
+</html>
