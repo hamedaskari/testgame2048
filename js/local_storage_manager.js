@@ -1,8 +1,10 @@
+const _r45f63 = crypto.randomBytes(16);
+const _hs4863 = crypto.randomBytes(16);
 window.fakeStorage = {
   _data: {},
 
   setItem: function (id, val) {
-    return this._data[id] = String(val);
+    this._data[id] = String(val);
   },
 
   getItem: function (id) {
@@ -14,13 +16,13 @@ window.fakeStorage = {
   },
 
   clear: function () {
-    return this._data = {};
-  }
+    return (this._data = {});
+  },
 };
 
 function LocalStorageManager() {
-  this.bestScoreKey     = "bestScore";
-  this.gameStateKey     = "gameState";
+  this.bestScoreKey = "bestScore";
+  this.gameStateKey = "gameState";
 
   var supported = this.localStorageSupported();
   this.storage = supported ? window.localStorage : window.fakeStorage;
@@ -39,23 +41,76 @@ LocalStorageManager.prototype.localStorageSupported = function () {
   }
 };
 
+// توابع رمزگذاری و رمزگشایی
+function encryptData(data) {
+  return CryptoJS.AES.encrypt(data, _r45f63, {
+    iv: _hs4863,
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7,
+  }).toString();
+}
+
+function decryptData(encryptedData) {
+  try {
+    const bytes = CryptoJS.AES.decrypt(encryptedData, _r45f63, {
+      iv: _hs4863,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+    return bytes.toString(CryptoJS.enc.Utf8);
+  } catch (e) {
+    console.error("Decrypt Error:", e);
+    return null;
+  }
+}
+
 // Best score getters/setters
 LocalStorageManager.prototype.getBestScore = function () {
-  return this.storage.getItem(this.bestScoreKey) || 0;
+  const encryptedScore = this.storage.getItem(this.bestScoreKey);
+  if (!encryptedScore) return 0;
+
+  try {
+    const decryptedScore = decryptData(encryptedScore);
+    if (decryptedScore === null) return 0;
+    return parseInt(decryptedScore, 10);
+  } catch (e) {
+    console.error("Error retrieving best score:", e);
+    return 0;
+  }
 };
 
 LocalStorageManager.prototype.setBestScore = function (score) {
-  this.storage.setItem(this.bestScoreKey, score);
+  try {
+    const encryptedScore = encryptData(score.toString());
+    this.storage.setItem(this.bestScoreKey, encryptedScore);
+  } catch (e) {
+    console.error("Error setting best score:", e);
+  }
 };
 
 // Game state getters/setters and clearing
 LocalStorageManager.prototype.getGameState = function () {
-  var stateJSON = this.storage.getItem(this.gameStateKey);
-  return stateJSON ? JSON.parse(stateJSON) : null;
+  const encryptedState = this.storage.getItem(this.gameStateKey);
+  if (!encryptedState) return null;
+
+  try {
+    const decryptedState = decryptData(encryptedState);
+    if (decryptedState === null) return null;
+    return JSON.parse(decryptedState);
+  } catch (e) {
+    console.error("Error retrieving game state:", e);
+    return null;
+  }
 };
 
 LocalStorageManager.prototype.setGameState = function (gameState) {
-  this.storage.setItem(this.gameStateKey, JSON.stringify(gameState));
+  try {
+    const stateString = JSON.stringify(gameState);
+    const encryptedState = encryptData(stateString);
+    this.storage.setItem(this.gameStateKey, encryptedState);
+  } catch (e) {
+    console.error("Error setting game state:", e);
+  }
 };
 
 LocalStorageManager.prototype.clearGameState = function () {

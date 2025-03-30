@@ -1,6 +1,6 @@
 // Function to get rank icon
 let allPlayersData = [];
-let userId = null;
+let userId = 422975454;
 let bestScoreCurrentUser = 0;
 function getRankIcon(rankNumber) {
   const player = allPlayersData[rankNumber];
@@ -22,7 +22,7 @@ function getRankIcon(rankNumber) {
 }
 if (Bale?.WebApp) {
   const initData = Bale?.WebApp?.initDataUnsafe;
-  userId = initData?.user?.id || null;
+  userId = 422975454 || initData?.user?.id || null;
 }
 // Function to render skeleton rows
 function renderSkeletonRows() {

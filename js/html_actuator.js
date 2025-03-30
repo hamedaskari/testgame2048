@@ -118,8 +118,10 @@ HTMLActuator.prototype.updateScore = function (score) {
   }
 };
 
+// اصلاح شده: بررسی مقدار bestScore برای جلوگیری از NaN
 HTMLActuator.prototype.updateBestScore = function (bestScore) {
-  this.bestContainer.textContent = bestScore;
+  const validatedBestScore = isNaN(bestScore) ? 0 : bestScore; // اگر مقدار نامعتبر بود، مقدار پیش‌فرض را تنظیم کنید
+  this.bestContainer.textContent = validatedBestScore;
 };
 
 HTMLActuator.prototype.message = function (won) {
