@@ -1,7 +1,7 @@
 // Function to get rank icon
 let allPlayersData = [];
 let userId = null;
-let bestScoreCurrentUser;
+let bestScoreCurrentUser = 0;
 function getRankIcon(rankNumber) {
   const player = allPlayersData[rankNumber];
   if (player?.userId === userId && player.rank) {
@@ -113,7 +113,7 @@ function renderLeaderboard(playersData) {
       if (player?.userId === userId) {
         bestScoreCurrentUser = player?.score;
         document.querySelector(".best-container").textContent =
-          player?.score || 0;
+          player?.score ?? 0;
         row.style.backgroundColor = "rgb(231 231 231 / 39%)";
         row.style.borderBottom = "2px solid rgb(47 176 0)";
       }
